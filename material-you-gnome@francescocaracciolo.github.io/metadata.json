@@ -1,0 +1,12 @@
+{
+  "name": "Material You Gnome",
+  "description": "Applies generated libadwaita theme from wallpaper using Material You. Fork of Material You Color Theming.",
+  "uuid": "material-you-gnome@francescocaracciolo.github.io",
+  "gettext-domain": "material-you-gnome",
+  "shell-version": [
+    "45",
+    "46"
+  ],
+  "url": "https://github.com/FrancescoCaracciolo/material-you-gnome",
+  "version": 17
+}
