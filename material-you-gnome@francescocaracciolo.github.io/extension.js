@@ -410,12 +410,12 @@ export default class MaterialYou extends Extension {
       try {
           if (is_dark) {
               Gio.Subprocess.new(
-                  ['/usr/bin/wal', '-b', background, '-i', image, '-nqe'],
+                  ['wal', '-b', background, '-i', image, '-nqe'],
                   Gio.SubprocessFlags.NONE
               );
           } else {
               Gio.Subprocess.new(
-                  ['/usr/bin/wal', '-b', background, '-i', image, '-nqel'],
+                  ['wal', '-b', background, '-i', image, '-nqel'],
                   Gio.SubprocessFlags.NONE
               );
           }
