@@ -64,6 +64,12 @@ export default class MaterialYou extends Extension {
         this._prefsSettings.connect('changed::scheme', () => {
             this.apply_theme(base_presets, color_mappings, true);
         });
+        this._prefsSettings.connect('changed::accent-color', () => {
+            this.apply_theme(base_presets, color_mappings, true);
+        });
+        this._prefsSettings.connect('changed::enable-accent-colors', () => {
+            this.apply_theme(base_presets, color_mappings, true);
+        });
         try {
             this._shellSettings = this.getSettings(SHELL_SCHEMA);
             this._shellSettings.connect('changed::name', () => {
@@ -102,6 +108,8 @@ export default class MaterialYou extends Extension {
             warn_shell_theme = true;
         }
         const color_scheme = settings.get_string("scheme");
+        const accent_color_enabled = settings.get_boolean("enable-accent-colors");
+        const accent_color = settings.get_string("accent-color");
         const show_notifications = settings.get_boolean("show-notifications");
         const height = settings.get_int("resize-height");
         const width = settings.get_int("resize-width");
@@ -129,7 +137,13 @@ export default class MaterialYou extends Extension {
             wall_path = Gio.File.new_for_uri(wall_path).get_path();
         }
         let pix_buf = GdkPixbuf.Pixbuf.new_from_file_at_size(wall_path, size.width, size.height);
-        let theme = theme_utils.themeFromImage(pix_buf);
+        let theme;
+        if (accent_color_enabled) {
+            theme = theme_utils.themeFromSourceColor(parseInt(accent_color), []);
+        } else {
+            theme = theme_utils.themeFromImage(pix_buf);
+        }
+
     
         // Configuring for light or dark theme
         let scheme = theme.schemes.light.props;
