@@ -283,32 +283,6 @@ export default class MaterialYouPrefs extends ExtensionPreferences {
         window.add(page);
     }
 }
-  
-class PywalInstallRow extends Adw.ActionRow {
-    static {
-        GObject.registerClass(this);
-    }
-
-    constructor(name, title, subtitle) {
-        const button = new Gtk.Button({
-            label: "Install",
-            valign: Gtk.Align.CENTER,
-        });
-
-        button.connect('clicked', () => {
-            install_pywal();
-            button.set_label("Installed");
-            // npm_utils.install_npm_deps();
-        });
-
-        super({
-            title: title,
-            subtitle: subtitle,
-            activatable_widget: button,
-        });
-        this.add_suffix(button);
-    }
-}
 
 class ColorAccentGroup extends Adw.PreferencesGroup {
     static {
