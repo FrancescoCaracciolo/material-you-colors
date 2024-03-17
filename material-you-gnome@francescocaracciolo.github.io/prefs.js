@@ -310,33 +310,6 @@ class PywalInstallRow extends Adw.ActionRow {
     }
 }
 
-class PywalGroup extends Adw.PreferencesGroup {
-    static {
-        GObject.registerClass(this);
-    }
-
-    constructor(settings) {
-        super({ title: "Enable Pywal Theming" });
-
-        this._settings = settings;
-
-        this.connect("destroy", () => this._settings.run_dispose());
-
-        this._addPywalInstall("request-install", "Install Pywal with pip", "Requires pip3 to already be installed");
-        this._addToggle("enable-pywal-theming", this._settings, "Enable Pywal Theming");
-    }
-
-    _addPywalInstall(name, title, subtitle) {
-        const row = new PywalInstallRow(name, title, subtitle);
-        this.add(row);
-    }
-
-    _addToggle(name, settings, title) {
-        const row = new MiscToggleRow(name, settings, title);
-        this.add(row);
-    }
-}
-
 class ColorAccentGroup extends Adw.PreferencesGroup {
     static {
         GObject.registerClass(this);
