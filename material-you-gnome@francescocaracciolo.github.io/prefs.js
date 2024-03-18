@@ -224,7 +224,26 @@ class MiscSpinnerRow extends Adw.ActionRow {
         this.add_suffix(widget);
     }
 }
+class CommandEntry extends Adw.EntryRow {
+   static {
+        GObject.registerClass(this);
+    }
 
+    constructor(settings) {
+          super({ title: "Command after theme change" });
+
+          this._settings = settings;
+          this.set_text(this._settings.get_string("extra-command"));
+          this.set_show_apply_button(true);
+          this.connect("destroy", () => this._settings.run_dispose());
+          this.connect("apply", this._createChangeHandler(this._settings, this));
+    }
+    _createChangeHandler(settings, obj) {
+        return function () {
+            settings.set_string("extra-command", obj.get_text());
+        }
+    }
+}
 class MiscGroup extends Adw.PreferencesGroup {
     static {
         GObject.registerClass(this);
@@ -232,7 +251,6 @@ class MiscGroup extends Adw.PreferencesGroup {
 
     constructor(settings) {
         super({ title: "Options" });
-
         this._actionGroup = new Gio.SimpleActionGroup();
         this.insert_action_group("misc", this._actionGroup);
 
@@ -245,6 +263,8 @@ class MiscGroup extends Adw.PreferencesGroup {
                          "Width to resize sample to, higher values may cause slowdown", 8, 4096, 1);
         this._addSpinner("resize-height", this._settings, "Wallpaper Sampling Height",
                          "Height to resize sample to, higher values may cause slowdown", 8, 4096, 1);
+        const entry = new CommandEntry(this._settings);
+        this.add(entry);
     }
 
     _addToggle(name, settings, title) {

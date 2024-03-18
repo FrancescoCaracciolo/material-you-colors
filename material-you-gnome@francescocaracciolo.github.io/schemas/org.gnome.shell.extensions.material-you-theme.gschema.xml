@@ -29,8 +29,8 @@
             <default>"4282549748"</default>
             <summary>Enabling Accent colors</summary>
         </key>
-        <key name="extra_command" type="s">
-            <default>""</default>
+        <key name="extra-command" type="s">
+            <default>"echo test"</default>
             <summary>Command to be run after theme change</summary>
         </key>  
     </schema>
