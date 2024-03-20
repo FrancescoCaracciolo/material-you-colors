@@ -2,7 +2,7 @@ all: update-po build
 
 build:
 	gnome-extensions pack -f \
-		./material-you-gnome@francescocaracciolo.github.io/ \
+		./material-you-colors@francescocaracciolo.github.io/ \
 		--extra-source=shell \
 		--extra-source=blend \
 		--extra-source=hct \
@@ -18,15 +18,15 @@ build:
 
 install:
 	gnome-extensions install -f \
-		material-you-gnome@francescocaracciolo.github.io.shell-extension.zip
+		material-you-colors@francescocaracciolo.github.io.shell-extension.zip
 
 pot:
-	mkdir -p material-you-gnome@francescocaracciolo.github.io/po
+	mkdir -p material-you-colors@francescocaracciolo.github.io/po
 	xgettext --from-code=UTF-8 \
-		material-you-gnome@francescocaracciolo.github.io/extension.js \
-		-o material-you-gnome@francescocaracciolo.github.io/po/material-you-gnome.pot
+		material-you-colors@francescocaracciolo.github.io/extension.js \
+		-o material-you-colors@francescocaracciolo.github.io/po/material-you-colors.pot
 
 update-po: pot
-	for po_file in material-you-gnome@francescocaracciolo.github.io/po/*.po; do \
-		msgmerge --update "$$po_file" material-you-gnome@francescocaracciolo.github.io/po/material-you-gnome.pot; \
+	for po_file in material-you-colors@francescocaracciolo.github.io/po/*.po; do \
+		msgmerge --update "$$po_file" material-you-colors@francescocaracciolo.github.io/po/material-you-colors.pot; \
 	done

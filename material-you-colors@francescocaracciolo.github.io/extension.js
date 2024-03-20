@@ -21,7 +21,7 @@
 const WALLPAPER_SCHEMA = 'org.gnome.desktop.background';
 const INTERFACE_SCHEMA = 'org.gnome.desktop.interface';
 const SHELL_SCHEMA = 'org.gnome.shell.extensions.user-theme';
-const PREFS_SCHEMA = 'org.gnome.shell.extensions.material-you-gnome';
+const PREFS_SCHEMA = 'org.gnome.shell.extensions.material-you-colors';
 
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
@@ -47,7 +47,7 @@ export default class MaterialYou extends Extension {
     constructor(uuid) {
         super(uuid);
         this._uuid = uuid;
-        this.extensiondir = GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-gnome@francescocaracciolo.github.io'; 
+        this.extensiondir = GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-colors@francescocaracciolo.github.io'; 
     }
 
     enable() {
