@@ -1,5 +1,6 @@
-# Material You Color Theming
-Applies generated libadwaita theme from wallpaper using Material You
+# Material You Gnome
+Applies generated libadwaita and gnome theme from wallpaper using Material You. It also supports custom color theming and pywal theming.
+Fork of [material-you-theme](https://github.com/avanisubbiah/material-you-theme).
 
 ![extension-screenshot](https://i.imgur.com/VLXfoEa_d.webp?maxwidth=2160&shape=thumb&fidelity=high)
 
@@ -30,8 +31,8 @@ dnf install gettext
 **Extension Installation**
 
 ```
-git clone https://github.com/avanishsubbiah/material-you-theme
-cd material-you-theme
+git clone https://github.com/FrancescoCaracciolo/material-you-colors.git
+cd material-you-colors
 make && make install
 ```
 Log out and log back in and you should be able to enable it in your extension manager.
