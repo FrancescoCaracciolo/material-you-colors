@@ -21,7 +21,7 @@
 const WALLPAPER_SCHEMA = 'org.gnome.desktop.background';
 const INTERFACE_SCHEMA = 'org.gnome.desktop.interface';
 const SHELL_SCHEMA = 'org.gnome.shell.extensions.user-theme';
-const PREFS_SCHEMA = 'org.gnome.shell.extensions.material-you-gnome';
+const PREFS_SCHEMA = 'org.gnome.shell.extensions.material-you-colors';
 
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
@@ -47,7 +47,7 @@ export default class MaterialYou extends Extension {
     constructor(uuid) {
         super(uuid);
         this._uuid = uuid;
-        this.extensiondir = GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-gnome@francescocaracciolo.github.io'; 
+        this.extensiondir = GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-colors@francescocaracciolo.github.io'; 
     }
 
     enable() {
@@ -111,6 +111,7 @@ export default class MaterialYou extends Extension {
         const accent_color_enabled = settings.get_boolean("enable-accent-colors");
         const accent_color = settings.get_string("accent-color");
         const show_notifications = settings.get_boolean("show-notifications");
+        const extra_command = settings.get_string("extra-command");
         const height = settings.get_int("resize-height");
         const width = settings.get_int("resize-width");
         const enable_pywal_theming = settings.get_boolean("enable-pywal-theming");
@@ -172,9 +173,12 @@ export default class MaterialYou extends Extension {
                 css += "@define-color " + prefix_key + key_2 + " " + base_preset.palette[prefix_key][key_2] + ";\n"
             }
         }
+        // Actions after theme created
         if (enable_pywal_theming) {
           this.run_pywal(base_preset.variables["window_bg_color"], wall_path, is_dark)
         } 
+        // Run custom command
+        this.run_command(extra_command);
         let config_path = GLib.get_home_dir() + "/.config";
         this.create_dir(config_path + "/gtk-4.0");
         this.create_dir(config_path + "/gtk-3.0");
@@ -422,6 +426,17 @@ export default class MaterialYou extends Extension {
       } catch (e) {
           logError(e);
       }
-    } 
+    }
+
+    run_command(command) {
+      try {
+          Gio.Subprocess.new(
+              ['bash', '-c', command],
+              Gio.SubprocessFlags.NONE
+          );
+      } catch (e) {
+          logError(e);
+      }
+  }
     
 }

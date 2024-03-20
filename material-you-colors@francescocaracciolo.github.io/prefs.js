@@ -13,7 +13,7 @@ import * as ext_utils from './utils/ext_utils.js';
 
 // const npm_utils = Me.imports.npm_utils;
 
-const PREFS_SCHEMA = "org.gnome.shell.extensions.material-you-gnome";
+const PREFS_SCHEMA = "org.gnome.shell.extensions.material-you-colors";
 const COLORS = {"#643f00": 0xffbc9769, "#005142": 0xffdafaef, "#722b65": 0xffdcabcc, "#00497e": 0xffd1e1f8, "#225104": 0xff7d916e, "#004397": 0xff4285f4, "#7c2c1b": 0xffb18c84, "#00504e": 0xff7ca7a5, "#403c8e": 0xffb7b4cf, "#3d4c00": 0xffb0b78e, "#64307c ": 0xff8e7596, "#005137 ": 0xff9bb8a8, "#4e4800": 0xfff0eab7};
 
 // Todo: Add custom css
@@ -78,7 +78,7 @@ class SassInstallRow extends Adw.ActionRow {
         });
 
         button.connect('clicked', () => {
-            const extensiondir =  GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-gnome@francescocaracciolo.github.io';
+            const extensiondir =  GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-colors@francescocaracciolo.github.io';
             install_npm_deps(extensiondir);
             button.set_label("Installed");
             // npm_utils.install_npm_deps();
@@ -224,7 +224,26 @@ class MiscSpinnerRow extends Adw.ActionRow {
         this.add_suffix(widget);
     }
 }
+class CommandEntry extends Adw.EntryRow {
+   static {
+        GObject.registerClass(this);
+    }
 
+    constructor(settings) {
+          super({ title: "Command after theme change" });
+
+          this._settings = settings;
+          this.set_text(this._settings.get_string("extra-command"));
+          this.set_show_apply_button(true);
+          this.connect("destroy", () => this._settings.run_dispose());
+          this.connect("apply", this._createChangeHandler(this._settings, this));
+    }
+    _createChangeHandler(settings, obj) {
+        return function () {
+            settings.set_string("extra-command", obj.get_text());
+        }
+    }
+}
 class MiscGroup extends Adw.PreferencesGroup {
     static {
         GObject.registerClass(this);
@@ -232,7 +251,6 @@ class MiscGroup extends Adw.PreferencesGroup {
 
     constructor(settings) {
         super({ title: "Options" });
-
         this._actionGroup = new Gio.SimpleActionGroup();
         this.insert_action_group("misc", this._actionGroup);
 
@@ -245,6 +263,8 @@ class MiscGroup extends Adw.PreferencesGroup {
                          "Width to resize sample to, higher values may cause slowdown", 8, 4096, 1);
         this._addSpinner("resize-height", this._settings, "Wallpaper Sampling Height",
                          "Height to resize sample to, higher values may cause slowdown", 8, 4096, 1);
+        const entry = new CommandEntry(this._settings);
+        this.add(entry);
     }
 
     _addToggle(name, settings, title) {
@@ -263,7 +283,7 @@ export default class MaterialYouPrefs extends ExtensionPreferences {
     }
 
     fillPreferencesWindow(window) {
-        const extensiondir =  GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-gnome@francescocaracciolo.github.io';
+        const extensiondir =  GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-colors@francescocaracciolo.github.io';
         // Create a preferences page and group
         const page = new Adw.PreferencesPage();
         const settings = this.getSettings(PREFS_SCHEMA);

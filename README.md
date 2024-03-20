@@ -31,8 +31,8 @@ dnf install gettext
 **Extension Installation**
 
 ```
-git clone https://github.com/FrancescoCaracciolo/material-you-gnome.git
-cd material-you-gnome
+git clone https://github.com/FrancescoCaracciolo/material-you-colors.git
+cd material-you-colors
 make && make install
 ```
 Log out and log back in and you should be able to enable it in your extension manager.

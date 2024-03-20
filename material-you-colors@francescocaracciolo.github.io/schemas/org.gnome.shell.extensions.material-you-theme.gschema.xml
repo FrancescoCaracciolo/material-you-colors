@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema id="org.gnome.shell.extensions.material-you-gnome" path="/org/gnome/shell/extensions/material-you-gnome/">
+    <schema id="org.gnome.shell.extensions.material-you-colors" path="/org/gnome/shell/extensions/material-you-colors/">
         <key name="scheme" type="s">
             <default>"Default"</default>
             <summary>Current color scheme</summary>
@@ -29,5 +29,9 @@
             <default>"4282549748"</default>
             <summary>Enabling Accent colors</summary>
         </key>
+        <key name="extra-command" type="s">
+            <default>"echo test"</default>
+            <summary>Command to be run after theme change</summary>
+        </key>  
     </schema>
 </schemalist>
