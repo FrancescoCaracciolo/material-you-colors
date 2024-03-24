@@ -197,6 +197,17 @@ export default class MaterialYou extends Extension {
                 theme.schemes.dark.props
             ).variables
           );
+            if (version >= 46) {
+                this.modify_colors(
+                    this.extensiondir + "/shell/" + version + "/gnome-shell-sass/_default-colors.txt",
+                    this.extensiondir + "/shell/" + version + "/gnome-shell-sass/_default-colors.scss",
+                    this.map_colors(
+                        color_mappings_sel.dark,
+                        base_presets.dark,
+                        theme.schemes.dark.props
+                    ).variables
+                  );``
+            }
             this.create_dir_sync(GLib.get_home_dir() + "/.local/share/themes/MaterialYou");
             this.create_dir_sync(GLib.get_home_dir() + "/.local/share/themes/MaterialYou/gnome-shell");
             this.compile_sass(
