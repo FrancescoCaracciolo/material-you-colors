@@ -33,5 +33,9 @@
             <default>"echo test"</default>
             <summary>Command to be run after theme change</summary>
         </key>  
+         <key name="arcmenu-theming" type="b">
+            <default>false</default>
+            <summary>Also theme ArcMenu extension</summary>
+        </key>
     </schema>
 </schemalist>

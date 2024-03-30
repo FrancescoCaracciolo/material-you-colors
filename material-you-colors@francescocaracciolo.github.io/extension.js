@@ -115,6 +115,7 @@ export default class MaterialYou extends Extension {
         const height = settings.get_int("resize-height");
         const width = settings.get_int("resize-width");
         const enable_pywal_theming = settings.get_boolean("enable-pywal-theming");
+        const enable_arcmenu_theming = settings.get_boolean("arcmenu-theming");
 
         let size = {height: height, width: width};
         let color_mappings_sel = color_mappings[color_scheme.toLowerCase()];
@@ -178,7 +179,9 @@ export default class MaterialYou extends Extension {
           this.run_pywal(base_preset.variables["window_bg_color"], wall_path, is_dark)
         } 
         // Customize arcmenu
-        this.change_arcmenu_theme(base_preset.variables);
+        if (enable_arcmenu_theming) {
+            this.change_arcmenu_theme(base_preset.variables);
+        }
         // Run custom command
         this.run_command(extra_command);
         let config_path = GLib.get_home_dir() + "/.config";
