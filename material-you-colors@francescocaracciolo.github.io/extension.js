@@ -177,6 +177,8 @@ export default class MaterialYou extends Extension {
         if (enable_pywal_theming) {
           this.run_pywal(base_preset.variables["window_bg_color"], wall_path, is_dark)
         } 
+        // Customize arcmenu
+        this.change_arcmenu_theme(base_preset.variables);
         // Run custom command
         this.run_command(extra_command);
         let config_path = GLib.get_home_dir() + "/.config";
@@ -448,6 +450,22 @@ export default class MaterialYou extends Extension {
       } catch (e) {
           logError(e);
       }
-  }
+    } 
+    
+    change_arcmenu_theme(vars) {
+      this.set_arcmenu_setting("override-menu-theme", "true");
+      this.set_arcmenu_setting("menu-background-color", "\\" + vars["headerbar_bg_color"]);
+      this.set_arcmenu_setting("menu-border-color", "rgb(60, 60, 60)");
+      this.set_arcmenu_setting("menu-foreground-color", "\\" + vars["headerbar_fg_color"]);
+      this.set_arcmenu_setting("menu-item-active-bg-color", "\\" + vars["accent_bg_color"]);
+      this.set_arcmenu_setting("menu-item-active-fg-color", "\\ " + vars["accent_fg_color"]);
+      this.set_arcmenu_setting("menu-item-hover-bg-color", "\\ " + vars["accent_bg_color"]);
+      this.set_arcmenu_setting("menu-item-hover-fg-color", "\\ " + vars["accent_fg_color"]);
+    }
+
+    set_arcmenu_setting(setting, value) {
+        this.run_command("gsettings --schemadir ~/.local/share/gnome-shell/extensions/arcmenu@arcmenu.com/schemas set org.gnome.shell.extensions.arcmenu " + setting + " " + value);
+    }
+   
     
 }
