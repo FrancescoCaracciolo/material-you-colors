@@ -83,11 +83,28 @@ export default class MaterialYou extends Extension {
             log(e);
         }
 
-        this.apply_theme(base_presets, color_mappings);
+        // Check if the current theme is already applied from material you
+        // to avoid re-applying
+        try {
+            let config_path = GLib.get_home_dir() + "/.config";
+            // Check if gtk theme is applied by material you
+            let content = this.read_file(config_path + "/gtk-4.0/.materialyou");
+            if (content != "yes") {
+                this.apply_theme(base_presets, color_mappings);
+            }
+        } catch (e) {
+            this.apply_theme(base_presets, color_mappings);
+            log(e);
+        }
     }
 
     disable() {
-        this.remove_theme();
+        // Don't remove theme on suspension
+        let lockingScreen = (Main.sessionMode.currentMode == "unlock-dialog"
+        || Main.sessionMode.currentMode == "lock-screen");
+        if (!lockingScreen) {
+            this.remove_theme();
+        }
         this._interfaceSettings = null;
         this._wallpaperSettings = null;
         this._prefsSettings = null;
@@ -188,6 +205,7 @@ export default class MaterialYou extends Extension {
         this.create_dir(config_path + "/gtk-4.0");
         this.create_dir(config_path + "/gtk-3.0");
         this.write_str(css, config_path + "/gtk-4.0/gtk.css");
+        this.write_str("yes", config_path + "/gtk-4.0/.materialyou");
         this.write_str(css, config_path + "/gtk-3.0/gtk.css");
          
         if (ext_utils.check_npm(this.extensiondir)) {
@@ -238,7 +256,7 @@ export default class MaterialYou extends Extension {
         // Undoing changes to theme when disabling extension
         this.delete_file(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css");
         this.delete_file(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css");
-    
+        this.delete_file(GLib.get_home_dir() + "/.config/gtk-4.0/.materialyou");  
         // Get prefs
         // const settings = ExtensionUtils.getSettings(PREFS_SCHEMA);
         // const show_notifications = settings.get_boolean("show-notifications");
@@ -446,10 +464,10 @@ export default class MaterialYou extends Extension {
 
     run_command(command) {
       try {
-          Gio.Subprocess.new(
-              ['bash', '-c', command],
+          const proc = Gio.Subprocess.new(
+              ["bash", "-c", command],
               Gio.SubprocessFlags.NONE
-          );
+          )
       } catch (e) {
           logError(e);
       }
