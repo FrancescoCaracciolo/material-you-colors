@@ -263,6 +263,7 @@ class MiscGroup extends Adw.PreferencesGroup {
                          "Width to resize sample to, higher values may cause slowdown", 8, 4096, 1);
         this._addSpinner("resize-height", this._settings, "Wallpaper Sampling Height",
                          "Height to resize sample to, higher values may cause slowdown", 8, 4096, 1);
+        this._addToggle("arcmenu-theming", this._settings, "Also theme ArcMenu extension");
         const entry = new CommandEntry(this._settings);
         this.add(entry);
     }
