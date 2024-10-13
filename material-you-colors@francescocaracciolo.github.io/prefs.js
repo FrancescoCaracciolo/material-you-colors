@@ -16,6 +16,7 @@ import * as ext_utils from './utils/ext_utils.js';
 const PREFS_SCHEMA = "org.gnome.shell.extensions.material-you-colors";
 const COLORS = {"#643f00": 0xffbc9769, "#005142": 0xffdafaef, "#722b65": 0xffdcabcc, "#00497e": 0xffd1e1f8, "#225104": 0xff7d916e, "#004397": 0xff4285f4, "#7c2c1b": 0xffb18c84, "#00504e": 0xff7ca7a5, "#403c8e": 0xffb7b4cf, "#3d4c00": 0xffb0b78e, "#64307c ": 0xff8e7596, "#005137 ": 0xff9bb8a8, "#4e4800": 0xfff0eab7};
 
+
 // Todo: Add custom css
 class ColorSchemeRow extends Adw.ActionRow {
     static {
