@@ -83,11 +83,28 @@ export default class MaterialYou extends Extension {
             log(e);
         }
 
-        this.apply_theme(base_presets, color_mappings);
+        // Check if the current theme is already applied from material you
+        // to avoid re-applying
+        try {
+            let config_path = GLib.get_home_dir() + "/.config";
+            // Check if gtk theme is applied by material you
+            let content = this.read_file(config_path + "/gtk-4.0/.materialyou");
+            if (content != "yes") {
+                this.apply_theme(base_presets, color_mappings);
+            }
+        } catch (e) {
+            this.apply_theme(base_presets, color_mappings);
+            log(e);
+        }
     }
 
     disable() {
-        this.remove_theme();
+        // Don't remove theme on suspension
+        let lockingScreen = (Main.sessionMode.currentMode == "unlock-dialog"
+        || Main.sessionMode.currentMode == "lock-screen");
+        if (!lockingScreen) {
+            this.remove_theme();
+        }
         this._interfaceSettings = null;
         this._wallpaperSettings = null;
         this._prefsSettings = null;
@@ -115,6 +132,7 @@ export default class MaterialYou extends Extension {
         const height = settings.get_int("resize-height");
         const width = settings.get_int("resize-width");
         const enable_pywal_theming = settings.get_boolean("enable-pywal-theming");
+        const enable_arcmenu_theming = settings.get_boolean("arcmenu-theming");
 
         let size = {height: height, width: width};
         let color_mappings_sel = color_mappings[color_scheme.toLowerCase()];
@@ -177,12 +195,17 @@ export default class MaterialYou extends Extension {
         if (enable_pywal_theming) {
           this.run_pywal(base_preset.variables["window_bg_color"], wall_path, is_dark)
         } 
+        // Customize arcmenu
+        if (enable_arcmenu_theming) {
+            this.change_arcmenu_theme(base_preset.variables);
+        }
         // Run custom command
         this.run_command(extra_command);
         let config_path = GLib.get_home_dir() + "/.config";
         this.create_dir(config_path + "/gtk-4.0");
         this.create_dir(config_path + "/gtk-3.0");
         this.write_str(css, config_path + "/gtk-4.0/gtk.css");
+        this.write_str("yes", config_path + "/gtk-4.0/.materialyou");
         this.write_str(css, config_path + "/gtk-3.0/gtk.css");
          
         if (ext_utils.check_npm(this.extensiondir)) {
@@ -233,7 +256,7 @@ export default class MaterialYou extends Extension {
         // Undoing changes to theme when disabling extension
         this.delete_file(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css");
         this.delete_file(GLib.get_home_dir() + "/.config/gtk-3.0/gtk.css");
-    
+        this.delete_file(GLib.get_home_dir() + "/.config/gtk-4.0/.materialyou");  
         // Get prefs
         // const settings = ExtensionUtils.getSettings(PREFS_SCHEMA);
         // const show_notifications = settings.get_boolean("show-notifications");
@@ -441,13 +464,29 @@ export default class MaterialYou extends Extension {
 
     run_command(command) {
       try {
-          Gio.Subprocess.new(
-              ['bash', '-c', command],
+          const proc = Gio.Subprocess.new(
+              ["bash", "-c", command],
               Gio.SubprocessFlags.NONE
-          );
+          )
       } catch (e) {
           logError(e);
       }
-  }
+    } 
+    
+    change_arcmenu_theme(vars) {
+      this.set_arcmenu_setting("override-menu-theme", "true");
+      this.set_arcmenu_setting("menu-background-color", "\\" + vars["headerbar_bg_color"]);
+      this.set_arcmenu_setting("menu-border-color", "rgb(60, 60, 60)");
+      this.set_arcmenu_setting("menu-foreground-color", "\\" + vars["headerbar_fg_color"]);
+      this.set_arcmenu_setting("menu-item-active-bg-color", "\\" + vars["accent_bg_color"]);
+      this.set_arcmenu_setting("menu-item-active-fg-color", "\\ " + vars["accent_fg_color"]);
+      this.set_arcmenu_setting("menu-item-hover-bg-color", "\\ " + vars["accent_bg_color"]);
+      this.set_arcmenu_setting("menu-item-hover-fg-color", "\\ " + vars["accent_fg_color"]);
+    }
+
+    set_arcmenu_setting(setting, value) {
+        this.run_command("gsettings --schemadir ~/.local/share/gnome-shell/extensions/arcmenu@arcmenu.com/schemas set org.gnome.shell.extensions.arcmenu " + setting + " " + value);
+    }
+   
     
 }
