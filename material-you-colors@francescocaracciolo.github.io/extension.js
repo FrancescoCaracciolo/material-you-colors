@@ -133,7 +133,8 @@ export default class MaterialYou extends Extension {
         const width = settings.get_int("resize-width");
         const enable_pywal_theming = settings.get_boolean("enable-pywal-theming");
         const enable_arcmenu_theming = settings.get_boolean("arcmenu-theming");
-
+        const python_backend_enabled = settings.get_boolean("python-backend")
+        // Get theme
         let size = {height: height, width: width};
         let color_mappings_sel = color_mappings[color_scheme.toLowerCase()];
     
@@ -175,8 +176,13 @@ export default class MaterialYou extends Extension {
             color_mapping = color_mappings_sel.dark;
             theme_str = _("Dark");
         }
-    
-    
+     
+        if (python_backend_enabled && ext_utils.check_pyback(this.extensiondir)) {
+          this.run_command("cd " + this.extensiondir + "; cd adwaita-material-you; bash run_integration.sh");
+          this.theme_notification(notify, show_notifications, false, color_scheme, theme_str)
+          return;
+        }
+   
         // Overwriting keys in base_preset with material colors
     
         base_preset = this.map_colors(color_mapping, base_preset, scheme);
@@ -250,8 +256,21 @@ export default class MaterialYou extends Extension {
                     "Some apps may require re-logging in to update");
             }
         }
+        this.theme_notification(notify, show_notifications, warn_shell_theme, color_scheme, theme_str)
+      }
+   
+    theme_notification(notify, show_notifications, warn_shell_theme, color_scheme, theme_str) {
+        // Notifying user on theme change
+        if (notify && show_notifications) {
+            if (warn_shell_theme) {
+                Main.notify("Applied Material You " + color_scheme + " " + theme_str + " Theme",
+                    "WARNING! Shell theme could not be applied automatically, Some apps may require re-logging in to update");
+            } else {
+                Main.notify("Applied Material You " + color_scheme + " " + theme_str + " Theme",
+                    "Some apps may require re-logging in to update");
+            }
+        }
     }
-    
     remove_theme() {
         // Undoing changes to theme when disabling extension
         this.delete_file(GLib.get_home_dir() + "/.config/gtk-4.0/gtk.css");

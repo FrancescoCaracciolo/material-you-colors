@@ -140,6 +140,35 @@ class PywalInstallRow extends Adw.ActionRow {
     }
 }
 
+
+class PybackendInstallRow extends Adw.ActionRow {
+    static {
+        GObject.registerClass(this);
+    }
+
+    constructor(name, title, subtitle) {
+        const button = new Gtk.Button({
+            label: "Install",
+            valign: Gtk.Align.CENTER,
+        });
+
+        button.connect('clicked', () => {
+            const extensiondir =  GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-colors@francescocaracciolo.github.io';
+
+            install_pybackend(extensiondir);
+            button.set_label("Installed");
+            // npm_utils.install_npm_deps();
+        });
+
+        super({
+            title: title,
+            subtitle: subtitle,
+            activatable_widget: button,
+        });
+        this.add_suffix(button);
+    }
+}
+
 class PywalGroup extends Adw.PreferencesGroup {
     static {
         GObject.registerClass(this);
@@ -159,6 +188,34 @@ class PywalGroup extends Adw.PreferencesGroup {
 
     _addPywalInstall(name, title, subtitle) {
         const row = new PywalInstallRow(name, title, subtitle);
+        this.add(row);
+    }
+
+    _addToggle(name, settings, title) {
+        const row = new MiscToggleRow(name, settings, title);
+        this.add(row);
+    }
+}
+
+class PybackendGroup extends Adw.PreferencesGroup {
+    static {
+        GObject.registerClass(this);
+    }
+
+    constructor(settings) {
+        super({ title: "Enable Python backend" });
+
+        this._settings = settings;
+
+        this.connect("destroy", () => this._settings.run_dispose());
+        if (!ext_utils.check_pyback(GLib.get_home_dir() + '/.local/share/gnome-shell/extensions/material-you-colors@francescocaracciolo.github.io')) {
+          this._addPywalInstall("request-install", "Install Python backend", "Requires git, python3 already installed");
+        }
+        this._addToggle("python-backend", this._settings, "Enable Python Backend, faster");
+    }
+
+    _addPywalInstall(name, title, subtitle) {
+        const row = new PybackendInstallRow(name, title, subtitle);
         this.add(row);
     }
 
@@ -299,6 +356,8 @@ export default class MaterialYouPrefs extends ExtensionPreferences {
         const misc_settings_group = new MiscGroup(settings);
         const pywal_group = new PywalGroup(settings);
         page.add(pywal_group);
+        const python_group = new PybackendGroup(settings);
+        page.add(python_group);
         page.add(misc_settings_group);
 
         window.add(page);
@@ -383,6 +442,19 @@ function install_npm_deps(extensiondir) {
         logError(e);
     }
 }
+
+function install_pybackend(extensiondir) {
+    try {
+        let command = "touch /home/francesco/kids; cd " + extensiondir + "; git clone https://github.com/FrancescoCaracciolo/adwaita-material-you.git; cd adwaita-material-you; bash local-install.sh";
+        const proc = Gio.Subprocess.new(
+              ["bash", "-c", command],
+              Gio.SubprocessFlags.NONE
+          )
+    } catch (e) {
+        logError(e);
+    }
+}
+
 
 function install_pywal() {
     try {
