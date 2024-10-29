@@ -183,7 +183,7 @@ export default class MaterialYou extends Extension {
         if (dark_pref === "prefer-dark") {
             is_dark = true;
         }
-        if (python_backend_enabled && ext_utils.check_pyback(this.extensiondir)) {
+        if (python_backend_enabled) {
           this.run_command("cd " + this.extensiondir + "; cd adwaita-material-you; bash run_integration.sh");
           let theme_str = is_dark ? "Dark" : "Light";
           this.theme_notification(notify, show_notifications, false, color_scheme, theme_str)
