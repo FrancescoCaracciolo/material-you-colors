@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-18 09:31+0200\n"
+"POT-Creation-Date: 2024-10-18 09:38+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -12,10 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.1.1\n"
 
-#: material-you-colors@francescocaracciolo.github.io/extension.js:210
+#: material-you-colors@francescocaracciolo.github.io/extension.js:213
 msgid "Light"
 msgstr "Claro"
 
-#: material-you-colors@francescocaracciolo.github.io/extension.js:215
+#: material-you-colors@francescocaracciolo.github.io/extension.js:218
 msgid "Dark"
 msgstr "Oscuro"
