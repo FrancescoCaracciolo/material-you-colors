@@ -95,6 +95,12 @@ export default class MaterialYou extends Extension {
             this.apply_theme(base_presets, color_mappings, true);
         });
         this._prefsSettings.connect('changed::accent-color', () => {
+            const accent_color_lock = this._prefsSettings.get_boolean("accent-color-lock");
+            if (accent_color_lock) {
+              this._prefsSettings.set_boolean("accent-color-lock", false);
+              return;
+            }
+
             this.apply_theme(base_presets, color_mappings, true);
         });
         this._prefsSettings.connect('changed::enable-accent-colors', () => {
@@ -170,6 +176,7 @@ export default class MaterialYou extends Extension {
           log("Accent color changed");
           let accent = interface_settings.get_string("accent-color");
           accent_color = COLORS[ACCENT_TO_COLOR[accent]];
+          settings.set_boolean("accent-color-lock", true);
           settings.set_string("accent-color", accent_color.toString(10));
         }
 
@@ -184,7 +191,7 @@ export default class MaterialYou extends Extension {
             is_dark = true;
         }
         if (python_backend_enabled) {
-          this.run_command("cd " + this.extensiondir + "; cd adwaita-material-you; bash run_integration.sh");
+          this.run_command("cd " + this.extensiondir + "; cd adwaita-material-you; bash run_integration.sh " + accent_color_changed);
           let theme_str = is_dark ? "Dark" : "Light";
           this.theme_notification(notify, show_notifications, false, color_scheme, theme_str)
           return;
