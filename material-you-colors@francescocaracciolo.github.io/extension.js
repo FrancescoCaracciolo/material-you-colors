@@ -84,6 +84,11 @@ export default class MaterialYou extends Extension {
             this.apply_theme(base_presets, color_mappings, true);
         });
         this._interfaceSettings.connect('changed::accent-color', () => {
+            const accent_color_lock = this._prefsSettings.get_boolean("accent-color-lock");
+            if (accent_color_lock) {
+              this._prefsSettings.set_boolean("accent-color-lock", false);
+              return;
+            }
             this.apply_theme(base_presets, color_mappings, true, true);
         });
         this._wallpaperSettings = this.getSettings(WALLPAPER_SCHEMA);
@@ -208,9 +213,10 @@ export default class MaterialYou extends Extension {
             wall_path = Gio.File.new_for_uri(wall_path).get_path();
         }
         let theme;
-        if (accent_color_enabled) {
+        if (accent_color_enabled || accent_color_changed) {
             theme = theme_utils.themeFromSourceColor(parseInt(accent_color), []);
             if (accent_color in COLOR_TO_ACCENT && !accent_color_changed) {
+              settings.set_boolean("accent-color-lock", true);
               this._interfaceSettings.set_string("accent-color", COLOR_TO_ACCENT[accent_color]);
             }
         } else {
