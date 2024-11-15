@@ -2,13 +2,10 @@
 Applies generated libadwaita and gnome theme from wallpaper using Material You. It also supports custom color theming and pywal theming.
 Fork of [material-you-theme](https://github.com/avanisubbiah/material-you-theme).
 
-![extension-screenshot](https://i.imgur.com/VLXfoEa_d.webp?maxwidth=2160&shape=thumb&fidelity=high)
+**Note**: This extension cannot be published on Gnome Extensions.
 
-<div align="center">
-  <a href="https://extensions.gnome.org/extension/5236/material-you-color-theming/">
-    <img src="https://img.shields.io/badge/Install%20from-extensions.gnome.org-4A86CF?style=for-the-badge&logo=Gnome&logoColor=white"/>
-  </a>  
-</div>
+
+![extension-screenshot](https://i.imgur.com/VLXfoEa_d.webp?maxwidth=2160&shape=thumb&fidelity=high)
 
 ## Installation
 Copy the extension to your extensions folder (create the folder if it does not exist).
