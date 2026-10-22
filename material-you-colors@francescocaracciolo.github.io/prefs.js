@@ -252,6 +252,67 @@ class MiscToggleRow extends Adw.ActionRow {
     }
 }
 
+const QT_PLATFORM_THEME_LINE = "QT_QPA_PLATFORMTHEME=qt6ct";
+
+function qtPlatformThemeConfigured() {
+    try {
+        const [ok, bytes] = GLib.file_get_contents('/etc/environment');
+        if (!ok)
+            return false;
+        const text = new TextDecoder().decode(bytes);
+        return /^\s*QT_QPA_PLATFORMTHEME\s*=\s*["']?qt6ct["']?\s*$/m.test(text);
+    } catch (e) {
+        return false;
+    }
+}
+
+class QtToggleRow extends MiscToggleRow {
+    static {
+        GObject.registerClass(this);
+    }
+
+    constructor(name, settings, title) {
+        super(name, settings, title);
+        this.set_subtitle("Requires the Python backend");
+        this._settings = settings;
+        this._name = name;
+        this._handler = settings.connect(`changed::${name}`, () => {
+            if (settings.get_boolean(name) && !qtPlatformThemeConfigured())
+                this._askEnvironment();
+        });
+        this.connect("destroy", () => settings.disconnect(this._handler));
+    }
+
+    _askEnvironment() {
+        const dialog = new Adw.MessageDialog({
+            transient_for: this.get_root(),
+            modal: true,
+            heading: "Set Qt platform theme?",
+            body: `For Qt applications to use the generated theme, ${QT_PLATFORM_THEME_LINE} ` +
+                  "must be set in /etc/environment. This needs administrator privileges, " +
+                  "and you must log out and back in afterwards.",
+        });
+        dialog.add_response("skip", "Not now");
+        dialog.add_response("set", "Set it");
+        dialog.set_response_appearance("set", Adw.ResponseAppearance.SUGGESTED);
+        dialog.set_default_response("set");
+        dialog.set_close_response("skip");
+        dialog.connect("response", (_dialog, response) => {
+            if (response !== "set")
+                return;
+            try {
+                Gio.Subprocess.new(
+                    ['pkexec', 'sh', '-c', `echo '${QT_PLATFORM_THEME_LINE}' >> /etc/environment`],
+                    Gio.SubprocessFlags.NONE
+                );
+            } catch (e) {
+                console.error(`Cannot update /etc/environment: ${e}`);
+            }
+        });
+        dialog.present();
+    }
+}
+
 class MiscSpinnerRow extends Adw.ActionRow {
     static {
         GObject.registerClass(this);
@@ -322,6 +383,7 @@ class MiscGroup extends Adw.PreferencesGroup {
         this._addSpinner("resize-height", this._settings, "Wallpaper Sampling Height",
                          "Height to resize sample to, higher values may cause slowdown", 8, 4096, 1);
         this._addToggle("arcmenu-theming", this._settings, "Also theme ArcMenu extension");
+        this.add(new QtToggleRow("qt-theming", this._settings, "Also theme KDE applications"));
         const entry = new CommandEntry(this._settings);
         this.add(entry);
     }
